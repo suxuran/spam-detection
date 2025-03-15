@@ -9,13 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-
-# Enable CORS for specific origins
-CORS(app, resources={
-    r"/predict": {
-        "origins": ["https://suxuran.github.io"]
-    }
-})
+CORS(app)  # Enable CORS for all routes
 
 # Load model and vectorizer
 model = joblib.load('spam_model.pkl')
@@ -46,24 +40,14 @@ def home():
     return "Spam Email Detection API is running!"
 
 # Predict endpoint
-@app.route('/predict', methods=['POST', 'OPTIONS'])
+@app.route('/predict', methods=['POST'])
 def predict():
-    if request.method == 'OPTIONS':
-        # Handle preflight requests
-        response = jsonify({'status': 'success'})
-        response.headers.add('Access-Control-Allow-Origin', 'https://suxuran.github.io')
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-        response.headers.add('Access-Control-Allow-Methods', 'POST')
-        return response
-
     data = request.json
     email = data['email']
     email_vec = vectorizer.transform([email])
     prediction = model.predict(email_vec)
     save_to_db(email, int(prediction[0]))
-    response = jsonify({'prediction': int(prediction[0])})
-    response.headers.add('Access-Control-Allow-Origin', 'https://suxuran.github.io')
-    return response
+    return jsonify({'prediction': int(prediction[0])})
 
 # Run the app
 if __name__ == '__main__':
