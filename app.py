@@ -9,7 +9,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+
+# Enable CORS for specific origins
+CORS(app, origins=["https://suxuran.github.io"])
 
 # Load model and vectorizer
 model = joblib.load('spam_model.pkl')
