@@ -1,13 +1,15 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS  # Import CORS
 import joblib
 import mysql.connector
 import os
-from dotenv import load_dotenv  # For loading environment variables
+from dotenv import load_dotenv
 
-# Load environment variables from .env file
+# Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 # Load model and vectorizer
 model = joblib.load('spam_model.pkl')
@@ -16,12 +18,11 @@ vectorizer = joblib.load('vectorizer.pkl')
 # Function to save data to MySQL
 def save_to_db(email, prediction):
     try:
-        # Use environment variables for database connection
         connection = mysql.connector.connect(
-            host=os.getenv('MYSQL_HOST'),      # MySQL host
-            user=os.getenv('MYSQL_USER'),      # MySQL username
-            password=os.getenv('MYSQL_PASSWORD'),  # MySQL password
-            database=os.getenv('MYSQL_DATABASE')   # Database name
+            host=os.getenv('MYSQL_HOST'),
+            user=os.getenv('MYSQL_USER'),
+            password=os.getenv('MYSQL_PASSWORD'),
+            database=os.getenv('MYSQL_DATABASE')
         )
         cursor = connection.cursor()
         query = "INSERT INTO emails (email, label) VALUES (%s, %s)"
@@ -50,5 +51,5 @@ def predict():
 
 # Run the app
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # Use PORT if provided, otherwise default to 5000
+    port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
