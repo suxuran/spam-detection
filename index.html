@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spam Email Detection</title>
+</head>
+<body>
+    <h1>Spam Email Detection</h1>
+    <textarea id="emailInput" placeholder="Paste your email here..." rows="10" cols="50"></textarea>
+    <br><br>
+    <button onclick="checkSpam()">Check Spam</button>
+    <h2 id="result"></h2>
+
+    <script>
+        async function checkSpam() {
+            const email = document.getElementById('emailInput').value;
+            const response = await fetch('https://spam-detection-f0l8.onrender.com/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: email }),
+            });
+            const data = await response.json();
+            const result = data.prediction === 1 ? 'Spam' : 'Not Spam';
+            document.getElementById('result').innerText = `Result: ${result}`;
+        }
+    </script>
+</body>
+</html>
