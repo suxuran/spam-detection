@@ -10,7 +10,7 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# Enable CORS for specific origins
+# Enable CORS for all routes and specific origins
 CORS(app, origins=["https://suxuran.github.io"])
 
 # Load model and vectorizer
@@ -42,14 +42,25 @@ def home():
     return "Spam Email Detection API is running!"
 
 # Predict endpoint
-@app.route('/predict', methods=['POST'])
+@app.route('/predict', methods=['POST', 'OPTIONS'])
 def predict():
-    data = request.json
-    email = data['email']
-    email_vec = vectorizer.transform([email])
-    prediction = model.predict(email_vec)
-    save_to_db(email, int(prediction[0]))
-    return jsonify({'prediction': int(prediction[0])})
+    if request.method == 'OPTIONS':
+        # Handle preflight requests
+        response = jsonify()
+        response.headers.add('Access-Control-Allow-Origin', 'https://suxuran.github.io')
+        response.headers.add('Access-Control-Allow-Methods', 'POST')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        return response
+    else:
+        # Handle POST requests
+        data = request.json
+        email = data['email']
+        email_vec = vectorizer.transform([email])
+        prediction = model.predict(email_vec)
+        save_to_db(email, int(prediction[0]))
+        response = jsonify({'prediction': int(prediction[0])})
+        response.headers.add('Access-Control-Allow-Origin', 'https://suxuran.github.io')
+        return response
 
 # Run the app
 if __name__ == '__main__':
