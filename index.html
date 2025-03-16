@@ -18,7 +18,8 @@
             console.log("Sending request with email:", email);  // Debug statement
 
             try {
-                const response = await fetch('https://spam-detection-f0l8.onrender.com', {
+                // Use the correct endpoint: /predict
+                const response = await fetch('https://spam-detection-f0l8.onrender.com/predict', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
