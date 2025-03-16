@@ -18,7 +18,7 @@
             console.log("Sending request with email:", email);  // Debug statement
 
             try {
-                const response = await fetch('https://spam-detection-f0l8.onrender.com/', {
+                const response = await fetch('https://spam-detection-f0l8.onrender.com/predict', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -27,6 +27,11 @@
                 });
 
                 console.log("Response status:", response.status);  // Debug statement
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
                 const data = await response.json();
                 console.log("Received response:", data);  // Debug statement
 
@@ -34,6 +39,7 @@
                 document.getElementById('result').innerText = `Result: ${result}`;
             } catch (error) {
                 console.error("Error:", error);  // Debug statement
+                document.getElementById('result').innerText = 'Error: Failed to check spam.';
             }
         }
     </script>

@@ -6,16 +6,16 @@ import os
 from dotenv import load_dotenv
 
 # Load environment variables
-load_dotenv()
+load_dotenv()  # Ensure this is in your Python script, not run in the terminal
 
 app = Flask(__name__)
 
 # Enable CORS for all routes and allow specific origins
 CORS(app, resources={
     r"/predict": {
-        "origins": ["https://suxuran.github.io"],
-        "methods": ["POST", "OPTIONS"],
-        "allow_headers": ["Content-Type"]
+        "origins": ["https://suxuran.github.io"],  # Allow requests from your frontend
+        "methods": ["POST", "OPTIONS"],  # Allow POST and OPTIONS methods
+        "allow_headers": ["Content-Type"]  # Allow Content-Type header
     }
 })
 
@@ -58,6 +58,7 @@ def predict():
         response.headers.add('Access-Control-Allow-Methods', 'POST')
         return response
 
+    # Handle POST requests
     data = request.json
     email = data['email']
     email_vec = vectorizer.transform([email])
